@@ -1,0 +1,19 @@
+[package]
+name = "glui"
+version = "0.1.0"
+authors = ["Fabian Thorand <f.thorand@gmail.com>"]
+edition = "2018"
+
+[lib]
+name = "glui"
+path = "src/lib.rs"
+
+[[bin]]
+name = "glui-demo"
+path = "demo/bin.rs"
+
+[dependencies]
+glutin = "0.21"
+nanovg = { version = "1.0.2", features = ["gl3"] }
+chrono = "0.4.6"
+gl = "0.12.0"
