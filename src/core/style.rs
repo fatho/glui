@@ -7,7 +7,7 @@ pub struct Style {
     pub clickable_hover: Color,
     pub clickable_active: Color,
     pub clickable_normal: Color,
-    pub clickable_border: BorderStyle,
+    pub widget_border: BorderStyle,
 }
 
 impl Default for Style {
@@ -18,7 +18,7 @@ impl Default for Style {
             clickable_active: Color::from_rgb(230, 230, 230),
             clickable_hover: Color::from_rgb(240, 240, 240),
             clickable_normal: Color::from_rgb(255, 255, 255),
-            clickable_border: BorderStyle::default(),
+            widget_border: BorderStyle::default(),
         }
     }
 }

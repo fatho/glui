@@ -1,5 +1,5 @@
 use glui::mk_id;
-use glui::widgets::Button;
+use glui::widgets::{Button, ProgressBar};
 use glui::core::{Glui};
 
 mod host;
@@ -60,6 +60,15 @@ fn main() {
                 state.counter = 0;
                 frame.invalidate();
             }
+
+            let progress = state.counter as f32;
+
+            ProgressBar::new()
+                .progress(progress)
+                .label(format!("{:.0}%", progress))
+                .at(10., 94.)
+                .size(150., 24.)
+                .reify(frame);
 
             true
         });

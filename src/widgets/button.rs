@@ -43,7 +43,7 @@ impl<S> Button<S> where
         let text_rect = self.region.center(text_bounds);
 
         frame.nanovg().path(|path| {
-            let border = &frame.style().clickable_border;
+            let border = &frame.style().widget_border;
 
             path.rounded_rect(
                 (self.region.x as f32, self.region.y as f32),
