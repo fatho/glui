@@ -1,4 +1,4 @@
-use super::{Glui, GluiState, Id, Style, Point, Size, Rect};
+use super::{Glui, GluiState, Id, Style, Point, Size, Rect, KeyEvent, VirtualKeyCode, ModifiersState, ButtonState};
 
 pub struct GluiFrame<'a, 'b> {
     glui: &'a mut Glui,
@@ -29,7 +29,7 @@ impl<'a, 'b> GluiFrame<'a, 'b> {
         &self.glui.uistate
     }
 
-    pub fn request_redraw(&mut self) {
+    pub fn invalidate(&mut self) {
         self.redraw = true;
     }
 
@@ -60,6 +60,43 @@ impl<'a, 'b> GluiFrame<'a, 'b> {
             && ! self.glui.uistate.mouse_left.is_pressed();
         
         pressed
+    }
+
+    /// Handle the interactions of a focusable widget with the current focus.
+    /// The `assume_focus` parameter causes a widget to immediately assume focus
+    /// which could be the case after e.g. being clicked.
+    /// The callback is called for each key event and should return false for
+    /// preventing the default behavior of such an event (e.g. a focus switch).
+    pub fn focusable_widget<F>(&mut self, id: Id, assume_focus: bool, mut handle_key: F) -> bool where
+        F: FnMut(&KeyEvent) -> bool
+    {
+        if self.glui.uistate.focus_widget.is_none() || assume_focus {
+            self.glui.uistate.focus_widget = Some(id);
+        }
+
+        if self.glui.uistate.has_focus(id) {
+            while let Some(event) = self.glui.uistate.key_input.pop_front() {
+                if handle_key(&event) {
+                    // Default behaviors for keys
+
+                    let focus_key = VirtualKeyCode::Tab;
+                    let next_mod = ModifiersState::default();
+                    let prev_mod = ModifiersState { shift: true, .. Default::default() };
+
+                    if event.key == focus_key && event.state == ButtonState::Pressed {
+                        if event.modifiers == next_mod {
+                            self.glui.uistate.focus_widget = None;
+                        } else if event.modifiers == prev_mod {
+                            self.glui.uistate.focus_widget = self.glui.uistate.last_focusable_widget;
+                        }
+                    }
+                }
+            }
+        }
+
+        self.glui.uistate.last_focusable_widget = Some(id);
+        
+        self.glui.uistate.focus_widget == Some(id)
     }
 
     fn text_options(&self) -> nanovg::TextOptions {

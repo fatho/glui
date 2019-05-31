@@ -31,14 +31,34 @@ fn main() {
 
             let label = format!("Already clicked {} times", state.counter);
 
-            let update_counter = Button::with_label(&label)
+            let increment = Button::with_label(&label)
                 .at(10., 10.)
                 .size(150., 24.)
                 .reify(mk_id!(), frame);
 
-            if update_counter {
+            if increment {
                 state.counter += 1;
-                frame.request_redraw();
+                frame.invalidate();
+            }
+
+            let decrement = Button::with_label("Decrement")
+                .at(10., 38.)
+                .size(150., 24.)
+                .reify(mk_id!(), frame);
+
+            if decrement {
+                state.counter -= 1;
+                frame.invalidate();
+            }
+
+            let reset = Button::with_label("Reset")
+                .at(10., 66.)
+                .size(150., 24.)
+                .reify(mk_id!(), frame);
+
+            if reset {
+                state.counter = 0;
+                frame.invalidate();
             }
 
             true

@@ -1,5 +1,6 @@
 use glutin::{WindowEvent, ElementState};
 use glui::core;
+use std::convert::TryInto;
 
 pub struct GlutinHost {
     gl_context: glutin::WindowedContext<glutin::PossiblyCurrent>,
@@ -59,6 +60,12 @@ impl GlutinHost {
                         } else {
                             core::ButtonState::Released
                         },
+                    WindowEvent::KeyboardInput { input, .. } =>
+                        if let Ok(key_event) = input.try_into() {
+                            uistate.key_input.push_back(key_event)
+                        },
+                    WindowEvent::ReceivedCharacter(ch) =>
+                        uistate.text_input.push(ch),
                     _ => {},
                 }
             }

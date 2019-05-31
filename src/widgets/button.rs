@@ -1,4 +1,4 @@
-use crate::core::{Id, Rect, GluiFrame};
+use crate::core::{Id, Rect, GluiFrame, VirtualKeyCode};
 
 pub struct Button<S> {
     label: S,
@@ -31,7 +31,13 @@ impl<S> Button<S> where
     }
 
     pub fn reify(self, id: Id, frame: &mut GluiFrame) -> bool {
-        let clicked = frame.clickable_widget(id, self.region);
+        let mut clicked = frame.clickable_widget(id, self.region);
+        let focused = frame.focusable_widget(id, clicked, |key_event| {
+            if key_event.state.is_pressed() && key_event.key == VirtualKeyCode::Return {
+                clicked = true;
+            }
+            true
+        });
 
         let text_bounds = frame.text_measure(self.label.as_ref());
         let text_rect = self.region.center(text_bounds);
@@ -56,8 +62,13 @@ impl<S> Button<S> where
                 frame.style().clickable_normal
             };
 
+            let width = if focused { 2.0 } else { 1.0 };
+
             path.fill(fill_color, nanovg::FillOptions::default());
-            path.stroke(border.color, nanovg::StrokeOptions::default());
+            path.stroke(border.color, nanovg::StrokeOptions {
+                width: width,
+                .. Default::default()
+            });
         }, nanovg::PathOptions::default());
 
         frame.text_render(self.label.as_ref(), text_rect.top_left());
