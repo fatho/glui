@@ -112,6 +112,6 @@ impl<S> ProgressBar<S> where
             path.stroke(border.color, nanovg::StrokeOptions::default());
         }, nanovg::PathOptions::default());
 
-        frame.text_render(self.label.as_ref(), text_rect.top_left());
+        frame.text_render(self.label.as_ref(), text_rect.top_left(), frame.style().foreground_color);
     }
 }

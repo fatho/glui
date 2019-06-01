@@ -29,6 +29,10 @@ impl<'a, 'b> GluiFrame<'a, 'b> {
         &self.glui.uistate
     }
 
+    pub fn uistate_mut(&mut self) -> &mut GluiState {
+        &mut self.glui.uistate
+    }
+
     pub fn invalidate(&mut self) {
         self.redraw = true;
     }
@@ -99,13 +103,9 @@ impl<'a, 'b> GluiFrame<'a, 'b> {
         self.glui.uistate.focus_widget == Some(id)
     }
 
-    fn text_options(&self) -> nanovg::TextOptions {
+    fn default_text_options(&self) -> nanovg::TextOptions {
         nanovg::TextOptions {
             size: self.glui.style.font_size,
-            color: nanovg::Color::from_rgb(0, 0, 0),
-            align: nanovg::Alignment::new().top().left(),
-            clip: nanovg::Clip::None,
-            transform: None,
             ..Default::default()
         }
     }
@@ -117,7 +117,7 @@ impl<'a, 'b> GluiFrame<'a, 'b> {
                 font,
                 (0.0, 0.0),
                 text,
-                self.text_options()
+                self.default_text_options()
             );
 
             Size {
@@ -127,14 +127,17 @@ impl<'a, 'b> GluiFrame<'a, 'b> {
         }).unwrap_or(Size::zero())
     }
 
-    pub fn text_render(&self, text: &str, position: Point) {
+    pub fn text_render(&self, text: &str, position: Point, color: nanovg::Color) {
         let default_font = &self.glui.style.font_name;
         if let Some(font) = self.font(default_font) {
             self.frame.text(
                 font,
                 (position.x as f32, position.y as f32),
                 text,
-                self.text_options()
+                nanovg::TextOptions {
+                    color: color,
+                    .. self.default_text_options()
+                }
             );
         }
     }

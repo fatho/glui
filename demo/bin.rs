@@ -1,5 +1,5 @@
 use glui::mk_id;
-use glui::widgets::{Button, ProgressBar};
+use glui::widgets::{Button, ProgressBar, TextBox, TextBoxState};
 use glui::core::{Glui};
 
 mod host;
@@ -8,6 +8,7 @@ use host::GlutinHost;
 
 struct MyState {
     counter: i32,
+    email: TextBoxState,
 }
 
 fn main() {
@@ -18,6 +19,7 @@ fn main() {
 
     let mut state = MyState {
         counter: 0,
+        email: TextBoxState::new(),
     };
     let mut running = true;
 
@@ -69,6 +71,12 @@ fn main() {
                 .at(10., 94.)
                 .size(150., 24.)
                 .reify(frame);
+
+            TextBox::new(&mut state.email)
+                .hint("E-Mail address")
+                .at(10., 122.)
+                .size(150., 24.)
+                .reify(mk_id!(), frame);
 
             true
         });

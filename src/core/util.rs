@@ -8,6 +8,10 @@ impl Point {
     pub fn zero() -> Point {
         Point { x: 0.0, y: 0.0 }
     }
+
+    pub fn as_f32(&self) -> (f32, f32) {
+        (self.x as f32, self.y as f32)
+    }
 }
 
 #[derive(Copy, Clone, PartialEq, Debug)]
@@ -67,6 +71,20 @@ impl Rect {
         Point {
             x: self.x,
             y: self.y,
+        }
+    }
+
+    pub fn top_right(&self) -> Point {
+        Point {
+            x: self.x + self.w,
+            y: self.y,
+        }
+    }
+
+    pub fn bottom_right(&self) -> Point {
+        Point {
+            x: self.x + self.w,
+            y: self.y + self.h,
         }
     }
 
